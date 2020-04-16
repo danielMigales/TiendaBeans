@@ -57,7 +57,7 @@ public class Producto implements Serializable {//BEAN FUENTE
 
         if (this.stockactual < getStockminimo()) //hay que realizar compra de material
         {
-            System.out.printf("SOY EL BEAN FUENTE: Se ha alacanzado el stock minimo, paso info al receptor %n ");
+            System.out.printf("SOY EL BEAN FUENTE: Se ha alcanzado el stock minimo, paso info al receptor %n ");
 
             propertySupport.firePropertyChange("stockactual",//LANZAMOS EL EVENTO AL RECEPTOR ENVIANDOLE DATOS
                     valorAnterior, this.stockactual);

@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import modelo.ConexionBD;
+import modelo.GestionTienda;
 
 /**
  *
@@ -33,11 +34,12 @@ public class Menu {
         do {
             System.out.println("\n*******************************************************MENU PRINCIPAL************************************************\n");
             System.out.println(ANSI_BLUE + "1. Mostrar catalogo de productos." + ANSI_RESET); //carga la tabla productos de la base de datos
-            System.out.println(ANSI_BLUE + "2. Hacer pedido. " + ANSI_RESET);
-            System.out.println(ANSI_BLUE + "3 Salir del programa.\n" + ANSI_RESET);
+            System.out.println(ANSI_BLUE + "2. Hacer pedido. " + ANSI_RESET); //Inserta en la tabla pedidos y descuenta en la tabla productos
+            System.out.println(ANSI_BLUE + "3. Añadir producto a la base de datos (tabla Productos). " + ANSI_RESET); //introduce un producto en la base de datos de productos
+            System.out.println(ANSI_BLUE + "4 Salir del programa.\n" + ANSI_RESET);
             System.out.println("Seleccione una opcion:");
             seleccion = entrada.nextInt();
-            System.out.println("\n***************************************************************************************************************************n");
+            System.out.println("\n***************************************************************************************************************************\n");
 
             switch (seleccion) {
                 case 1:
@@ -50,10 +52,22 @@ public class Menu {
                 break;
 
                 case 2:
-
+                    GestionTienda pedido = new GestionTienda();
+                    pedido.hacerPedido();
                     break;
 
                 case 3:
+                try {
+                    ConexionBD conexion = new ConexionBD();
+                    conexion.insertarProductos();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+
+                case 4:
                     salir = false;
                     break;
             }
