@@ -32,14 +32,14 @@ public class Menu {
         boolean salir = true;
 
         do {
-            System.out.println("\n*******************************************************MENU PRINCIPAL************************************************\n");
+            System.out.println("\n************************************************************MENU PRINCIPAL*****************************************************\n");
             System.out.println(ANSI_BLUE + "1. Mostrar catalogo de productos." + ANSI_RESET); //carga la tabla productos de la base de datos
             System.out.println(ANSI_BLUE + "2. Hacer pedido. " + ANSI_RESET); //Inserta en la tabla pedidos y descuenta en la tabla productos
-            System.out.println(ANSI_BLUE + "3. Añadir producto a la base de datos (tabla Productos). " + ANSI_RESET); //introduce un producto en la base de datos de productos
+            System.out.println(ANSI_BLUE + "3. Añadir producto nuevo a la base de datos (tabla Productos). " + ANSI_RESET); //introduce un producto en la base de datos de productos
             System.out.println(ANSI_BLUE + "4 Salir del programa.\n" + ANSI_RESET);
             System.out.println("Seleccione una opcion:");
             seleccion = entrada.nextInt();
-            System.out.println("\n***************************************************************************************************************************\n");
+            System.out.println("\n*******************************************************************************************************************************\n");
 
             switch (seleccion) {
                 case 1:

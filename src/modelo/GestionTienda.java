@@ -1,7 +1,7 @@
 package modelo;
 
-import Tiendabean.Pedido;
-import Tiendabean.Producto;
+import bean.Pedido;
+import bean.Producto;
 import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Daniel
+ * @author Daniel Migales Puertas
  *
  */
 public class GestionTienda {
@@ -33,10 +33,9 @@ public class GestionTienda {
             pedido1.setCantidad(cantidad);
             int nuevo_stock = producto1.getStockactual() - pedido1.getCantidad(); //Decremento el stock
             producto1.setStockactual(nuevo_stock); //cambiamos el stock
-
+            conexion.insertarPedidos(pedido1); //insertamos entrada en la tabla pedidos
             System.out.printf("PEDIDO REALIZADO -->Compro: " + pedido1.getCantidad() + " de " + pedido1.getProducto().getDescripcion() + "\n");
-
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(GestionTienda.class.getName()).log(Level.SEVERE, null, ex);
         }
 

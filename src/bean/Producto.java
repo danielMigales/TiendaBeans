@@ -1,10 +1,11 @@
-package Tiendabean;
+package bean;
 
 import java.beans.*;
 import java.io.Serializable;
 
 /**
  *
+ * @author Daniel Migales Puertas
  *
  */
 public class Producto implements Serializable {//BEAN FUENTE
@@ -21,8 +22,7 @@ public class Producto implements Serializable {//BEAN FUENTE
         propertySupport = new PropertyChangeSupport(this);
     }
 
-    public Producto(int idproducto, String descripcion,
-            int stockactual, int stockminimo, float pvp) {
+    public Producto(int idproducto, String descripcion, int stockactual, int stockminimo, float pvp) {
         propertySupport = new PropertyChangeSupport(this);//BEAN FUENTE
         this.idproducto = idproducto;
         this.descripcion = descripcion;
@@ -58,12 +58,9 @@ public class Producto implements Serializable {//BEAN FUENTE
         if (this.stockactual < getStockminimo()) //hay que realizar compra de material
         {
             System.out.printf("SOY EL BEAN FUENTE: Se ha alcanzado el stock minimo, paso info al receptor %n ");
-
             propertySupport.firePropertyChange("stockactual",//LANZAMOS EL EVENTO AL RECEPTOR ENVIANDOLE DATOS
                     valorAnterior, this.stockactual);
-
         }
-
     }
 
     public int getStockminimo() {

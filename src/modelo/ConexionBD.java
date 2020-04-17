@@ -1,12 +1,18 @@
 package modelo;
 
-import Tiendabean.Producto;
+import bean.Pedido;
+import bean.Producto;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
+
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +24,7 @@ import java.util.logging.Logger;
  */
 public class ConexionBD {
 
+    //PARA USAR ESTA BASE DE DATOS HAY QUE CREAR EN EL SERVIDOR MYSQL LA BASE DE DATOS tiendaBeans. LAS TABLAS SE CREAN AUTOMATICAMENTE CUANDO SE INSERTE ALGO EN ELLAS
 //datos de la base de datos 
     private static Connection conection;
     private static final String DRIVER = "com.mysql.jdbc.Driver";
@@ -46,9 +53,10 @@ public class ConexionBD {
         conection = null;
     }
 
-    //insertar los datos en la base de datos a partir del arraylist
+    //insertar los datos en la base de datos productos (para introducir nuevos productos al stock de forma manual)
     public void insertarProductos() throws SQLException, ClassNotFoundException {
 
+        //obtengo los datos a insertar mediante teclado usuario
         Scanner entradaString = new Scanner(System.in);
         Scanner entradaInt = new Scanner(System.in);
         Scanner entradaFloat = new Scanner(System.in);
@@ -64,8 +72,9 @@ public class ConexionBD {
         Class.forName(DRIVER);
         conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
 
+        //crea la tabla productos si no existe con los siguientes campos:
         PreparedStatement ps = (PreparedStatement) conection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE1
-                + "(id SERIAL PRIMARY KEY, descripcion VARCHAR (150), stock int (11), stockmin int (11), pvp DOUBLE )");
+                + "(id SERIAL PRIMARY KEY, descripcion VARCHAR (150), stock int (11), stockmin int (11), pvp FLOAT )");
         ps.executeUpdate();
         System.out.println("Tabla " + TABLE1 + " creada o actualizada.");
 
@@ -80,8 +89,7 @@ public class ConexionBD {
                 rs.next();
             }
         }
-
-        System.out.println("\n************************************************************************\n");
+        System.out.println("\n***************************************************************************************************************************\n");
     }
 
     //lee los datos en la base de datos y los muestra por pantalla
@@ -101,15 +109,15 @@ public class ConexionBD {
                 int stock = rs.getInt("stock");
                 int stockmin = rs.getInt("stockmin");
                 float pvp = rs.getFloat("pvp");
-                System.out.println("ID: " + id + "\tDescripcion: " + descripcion + "\tStock: " + stock + "\t\tStock minimo: " + stockmin + "\t\tPvp: " + pvp + "\n");
+                System.out.println("ID: " + id + "\tDescripcion: " + descripcion + "\t\tStock: " + stock + "\t\tStock minimo: " + stockmin + "\t\tPvp: " + pvp + "\n");
                 resultados++;
             }
             if (resultados == 0) {
                 System.out.println("No se ha encontrado ningun resultado.");
-                System.out.println("\n*********************************************************************\n");
+                System.out.println("\n***************************************************************************************************************************\n");
             }
             rs.close();
-            System.out.println("\n*************************************************************************\n");
+            System.out.println("\n***************************************************************************************************************************\n");
         } finally {
             if (st != null) {
                 st.close();
@@ -117,11 +125,12 @@ public class ConexionBD {
         }
     }
 
+    //Cuando se va a realizar un pedido nuevo el usuario ha de especificar solo el id del producto, y se hace un select para buscar ese producto y añadirlo al pedido
     public Producto buscarProducto(int id) throws SQLException {
 
         Statement st = null;
         String sql = "SELECT * FROM " + TABLE1 + " WHERE id = " + id + ";";
-        System.out.println(sql);
+        //System.out.println(sql);
         conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
         Producto producto1 = null;
 
@@ -141,10 +150,10 @@ public class ConexionBD {
             }
             if (resultados == 0) {
                 System.out.println("No se ha encontrado ningun resultado.");
-                System.out.println("\n**************************************************\n");
+                System.out.println("\n***************************************************************************************************************************\n");
             }
             rs.close();
-            System.out.println("\n**************************************************\n");
+            System.out.println("\n***************************************************************************************************************************\n");
         } finally {
             if (st != null) {
                 st.close();
@@ -153,8 +162,76 @@ public class ConexionBD {
         return producto1;
     }
 
-    public void insertarPedidos() {
+    //Cuando se hace un pedido se crea o actualiza la tabla pedidos agregando un nuevo registro
+    public void insertarPedidos(Pedido pedido) throws ClassNotFoundException, SQLException {
 
+        Class.forName(DRIVER);
+        conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
+
+        PreparedStatement ps = (PreparedStatement) conection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE2
+                + "(numeroPedido SERIAL PRIMARY KEY , idProducto int(11), descripcion VARCHAR (150), stockActual int (11), pvp FLOAT, fecha DATE, cantidad int(11) )");
+        ps.executeUpdate();
+        System.out.println("Tabla " + TABLE2 + " creada o actualizada.");
+
+        //El parametro que recibe este metodo es un objeto pedido que incluye un objeto producto. 
+        //Extraigo los datos de ambos objetos para completar la query e insertar un nuevo registro
+        Producto producto = pedido.getProducto();
+        int idProducto = producto.getIdproducto();
+        String descripcion = producto.getDescripcion();
+        int stockActual = producto.getStockactual();
+        float pvp = producto.getPvp();
+        //conversion de la fecha actual para introducirla con el formato sql correcto
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date fechaActual = new Date();
+        String fecha = dateFormat.format(fechaActual);
+        int cantidad = pedido.getCantidad();
+
+        String sql = "INSERT INTO " + TABLE2 + "(idProducto, descripcion, stockActual, pvp, fecha, cantidad ) values ('" + idProducto + "', '" + descripcion + "', '"
+                + stockActual + "', '" + pvp + "', '" + fecha + "', '" + cantidad + "')";
+        System.out.println(sql);
+
+        try (Statement st = conection.createStatement()) {
+            st.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+            System.out.println("Datos añadidos a la tabla.");
+            try (ResultSet rs = st.getGeneratedKeys()) {
+                rs.next();
+            }
+        }
+
+        //ACTUALIZAR TABLA DE PRODUCTOS DESCONTANDO EL PRODUCTO PEDIDO
+    }
+
+    public void insertarCompras(Producto producto) throws ClassNotFoundException, SQLException {
+
+        Class.forName(DRIVER);
+        conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
+
+        PreparedStatement ps = (PreparedStatement) conection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE3
+                + "(idCompra SERIAL PRIMARY KEY , idProducto int(11), descripcion VARCHAR (150), cantidadCompra int (11), pvp FLOAT, fecha DATE )");
+        ps.executeUpdate();
+        System.out.println("Tabla " + TABLE3 + " creada o actualizada.");
+
+        //extraigo del objeto pasado como parametro sus atributos para incluirlos en la tabla
+        int idProducto = producto.getIdproducto();
+        String descripcion = producto.getDescripcion();
+        int cantidadCompra = producto.getStockminimo(); //haremos una compra del stock minimo que debemos tener
+        float pvp = producto.getPvp();
+        //conversion de la fecha actual para introducirla con el formato sql correcto
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date fechaActual = new Date();
+        String fecha = dateFormat.format(fechaActual);
+
+        String sql = "INSERT INTO " + TABLE3 + "(idProducto, descripcion, cantidadCompra, pvp, fecha ) values ('" + idProducto + "', '" + descripcion + "', '"
+                + cantidadCompra + "', '" + pvp + "', '" + fecha + "')";
+        System.out.println(sql);
+
+        try (Statement st = conection.createStatement()) {
+            st.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+            System.out.println("Datos añadidos a la tabla.");
+            try (ResultSet rs = st.getGeneratedKeys()) {
+                rs.next();
+            }
+        }
     }
 
 }
