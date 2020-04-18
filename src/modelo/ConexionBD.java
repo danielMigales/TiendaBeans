@@ -93,7 +93,7 @@ public class ConexionBD {
     }
 
     //lee los datos en la base de datos y los muestra por pantalla
-    public void consultaProductos() throws SQLException {
+    public void consultarProductos() throws SQLException {
 
         Statement st = null;
         String sql = "SELECT * FROM " + TABLE1 + ";";
@@ -197,7 +197,7 @@ public class ConexionBD {
                 rs.next();
             }
         }
-
+        System.out.println("\n***************************************************************************************************************************\n");
         //ACTUALIZAR TABLA DE PRODUCTOS DESCONTANDO EL PRODUCTO PEDIDO
     }
 
@@ -232,6 +232,99 @@ public class ConexionBD {
                 rs.next();
             }
         }
+        System.out.println("\n***************************************************************************************************************************\n");
+    }
+
+    public void consultarPedidos() throws SQLException {
+
+        Statement st = null;
+        String sql = "SELECT * FROM " + TABLE2 + ";";
+        conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
+        try {
+            st = conection.createStatement();
+            try (ResultSet rs = st.executeQuery(sql)) {
+                int resultados = 0;
+
+                while (rs.next()) {
+
+                    int numeroPedido = rs.getInt("numeroPedido");
+                    int idProducto = rs.getInt("idProducto");
+                    String descripcion = rs.getString("descripcion");
+                    int stockActual = rs.getInt("stockActual");
+                    float pvp = rs.getFloat("pvp");
+                    String fecha = rs.getString("fecha");
+                    int cantidad = rs.getInt("cantidad");
+
+                    System.out.println("NumPedido: " + numeroPedido + "\tidProducto: " + idProducto + "\tDescripcion: " + descripcion
+                            + "\t\tStock Actual: " + stockActual + "\t\tPvp: " + pvp + "\t\tFecha: " + fecha + "\t\tCantidad: " + cantidad + "\n");
+                    resultados++;
+                }
+                if (resultados == 0) {
+                    System.out.println("No se ha encontrado ningun resultado.");
+                    System.out.println("\n***************************************************************************************************************************\n");
+                }
+            }
+            System.out.println("\n***************************************************************************************************************************\n");
+        } finally {
+            if (st != null) {
+                st.close();
+            }
+        }
+    }
+
+    public void consultarCompras() throws SQLException {
+
+        Statement st = null;
+        String sql = "SELECT * FROM " + TABLE3 + ";";
+        conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
+        try {
+            st = conection.createStatement();
+            try (ResultSet rs = st.executeQuery(sql)) {
+                int resultados = 0;
+
+                while (rs.next()) {
+                    int idCompra = rs.getInt("idCompra");
+                    int idProducto = rs.getInt("idProducto");
+                    String descripcion = rs.getString("descripcion");
+                    int cantidadCompra = rs.getInt("cantidadCompra");
+                    float pvp = rs.getFloat("pvp");
+                    String fecha = rs.getString("fecha");
+                    System.out.println("idCompra: " + idCompra + "\tidProducto: " + idProducto + "\tDescripcion: " + descripcion + "\t\tcantidadCompra: " + cantidadCompra
+                            + "\t\tPvp: " + pvp + "\t\tfecha: " + fecha + "\n");
+                    resultados++;
+                }
+                if (resultados == 0) {
+                    System.out.println("No se ha encontrado ningun resultado.");
+                    System.out.println("\n***************************************************************************************************************************\n");
+                }
+            }
+            System.out.println("\n***************************************************************************************************************************\n");
+        } finally {
+            if (st != null) {
+                st.close();
+            }
+        }
+    }
+
+    public void actualizarStockProductos(int id, int nuevoValor ) throws SQLException {
+
+        Statement st = null;
+        String sql = "UPDATE " + TABLE1 + " SET stock " + " = '" + nuevoValor + "' WHERE id = " + id + "";        
+        conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
+        try {
+            st = conection.createStatement();
+            st.executeUpdate(sql);
+            System.out.println("Tabla productos actualizada.");
+            System.out.println(sql);
+            System.out.println("El stock actual del producto " + id + " es de: " + nuevoValor);
+            System.out.println("\n***************************************************************************************************************************\n");
+
+        } finally {
+            if (st != null) {
+                st.close();
+            }
+        }
+
     }
 
 }

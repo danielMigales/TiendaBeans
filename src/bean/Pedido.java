@@ -71,10 +71,10 @@ public class Pedido implements Serializable, PropertyChangeListener {//bean rece
         System.out.printf("SOY EL BEAN RECEPTOR E INFORMO: Se ha alcanzado el stock minimo. %n");
         System.out.printf("Stock anterior: %d%n", evt.getOldValue());
         System.out.printf("Stock actual: %d%n", evt.getNewValue());
+        System.out.println("\n***************************************************************************************************************************\n");
         System.out.printf("SOY EL BEAN RECEPTOR Y ACTUO: Se procede a solicitar compra de material del producto: %s%n", producto.getDescripcion());
 
         //insertar COMPRA DE MATERIAL DEL PRODUCTO QUE HA SUPERADO EL STOCK     
-        
         ConexionBD conexion = new ConexionBD();
         try {
             conexion.insertarCompras(producto);

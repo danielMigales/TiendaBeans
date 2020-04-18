@@ -33,8 +33,9 @@ public class GestionTienda {
             pedido1.setCantidad(cantidad);
             int nuevo_stock = producto1.getStockactual() - pedido1.getCantidad(); //Decremento el stock
             producto1.setStockactual(nuevo_stock); //cambiamos el stock
-            conexion.insertarPedidos(pedido1); //insertamos entrada en la tabla pedidos
             System.out.printf("PEDIDO REALIZADO -->Compro: " + pedido1.getCantidad() + " de " + pedido1.getProducto().getDescripcion() + "\n");
+            conexion.insertarPedidos(pedido1); //insertamos entrada en la tabla pedidos  
+            conexion.actualizarStockProductos(id, nuevo_stock);//actualizamos el numero de stock en la tabla productos
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(GestionTienda.class.getName()).log(Level.SEVERE, null, ex);
         }
