@@ -52,6 +52,78 @@ public class ConexionBD {
     public void desconectar() {
         conection = null;
     }
+    
+     //insertar los productos por defeto en la base de datos
+    public void insertarProductosIniciales() throws SQLException, ClassNotFoundException {
+
+        Class.forName(DRIVER);
+        conection = (Connection) DriverManager.getConnection(URL + BD, USER, PASSWORD);
+
+        //crea la tabla productos si no existe con los siguientes campos:
+        PreparedStatement ps = (PreparedStatement) conection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE1
+                + "(id SERIAL PRIMARY KEY, descripcion VARCHAR (150), stock int (11), stockmin int (11), pvp FLOAT )");
+        ps.executeUpdate();
+        System.out.println("Tabla " + TABLE1 + " creada o actualizada.");
+        
+        String descripcion1 = "Zapatillas Nike";
+        int stock1 = 3;
+        int stockmin1 = 3;
+        float pvp1 = 100;
+        
+        String descripcion2 = "Zapatillas Reebok";
+        int stock2 = 5;
+        int stockmin2 = 2;
+        float pvp2 = 90;
+        
+        String descripcion3 = "Zapatillas Adidas";
+        int stock3 = 15;     
+        int stockmin3 = 3;
+        float pvp3 = 120;
+
+        String sql = "INSERT INTO " + TABLE1 + "(descripcion, stock, stockmin, pvp) values ('" + descripcion1 + "', '"
+                + stock1 + "', '" + stockmin1 + "', '" + pvp1 + "')";
+        System.out.println(sql);
+
+        try (Statement st = conection.createStatement()) {
+            st.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+            System.out.println("Datos añadidos a la tabla.");
+            try (ResultSet rs = st.getGeneratedKeys()) {
+                rs.next();
+            }
+        }
+        
+        String sql2 = "INSERT INTO " + TABLE1 + "(descripcion, stock, stockmin, pvp) values ('" + descripcion2 + "', '"
+                + stock2 + "', '" + stockmin2 + "', '" + pvp2 + "')";
+        System.out.println(sql2);
+
+        try (Statement st = conection.createStatement()) {
+            st.executeUpdate(sql2, Statement.RETURN_GENERATED_KEYS);
+            System.out.println("Datos añadidos a la tabla.");
+            try (ResultSet rs = st.getGeneratedKeys()) {
+                rs.next();
+            }
+        }
+        
+        String sql3 = "INSERT INTO " + TABLE1 + "(descripcion, stock, stockmin, pvp) values ('" + descripcion3 + "', '"
+                + stock3 + "', '" + stockmin3 + "', '" + pvp3 + "')";
+        System.out.println(sql3);
+
+        try (Statement st = conection.createStatement()) {
+            st.executeUpdate(sql3, Statement.RETURN_GENERATED_KEYS);
+            System.out.println("Datos añadidos a la tabla.");
+            try (ResultSet rs = st.getGeneratedKeys()) {
+                rs.next();
+            }
+        }
+        
+        
+        
+        
+        
+        
+        
+        System.out.println("\n***************************************************************************************************************************\n");
+    }
 
     //insertar los datos en la base de datos productos (para introducir nuevos productos al stock de forma manual)
     public void insertarProductos() throws SQLException, ClassNotFoundException {

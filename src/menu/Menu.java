@@ -33,6 +33,7 @@ public class Menu {
 
         do {
             System.out.println("\n************************************************************MENU PRINCIPAL*****************************************************\n");
+            System.out.println(ANSI_BLUE + "0. Insertar en la base de datos los productos iniciales." + ANSI_RESET);//inserta los productos del ejemplo
             System.out.println(ANSI_BLUE + "1. Mostrar catalogo de productos." + ANSI_RESET); //carga la tabla productos de la base de datos
             System.out.println(ANSI_BLUE + "2. Hacer pedido. " + ANSI_RESET); //Inserta en la tabla pedidos y descuenta en la tabla productos
             System.out.println(ANSI_BLUE + "3. Añadir producto nuevo a la base de datos (tabla Productos). " + ANSI_RESET); //introduce un producto en la base de datos de productos
@@ -44,6 +45,19 @@ public class Menu {
             System.out.println("\n*******************************************************************************************************************************\n");
 
             switch (seleccion) {
+
+                case 0:
+                   try {
+                    ConexionBD conexion = new ConexionBD();
+                    conexion.insertarProductosIniciales();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+
+
                 case 1:
                 try {
                     ConexionBD conexion = new ConexionBD();
@@ -78,8 +92,7 @@ public class Menu {
                 }
                 break;
 
-                case 5:
-                    
+                case 5:    
                     try {
                     ConexionBD conexion = new ConexionBD();
                     conexion.consultarCompras();
@@ -91,7 +104,6 @@ public class Menu {
                 case 6:
                     salir = false;
                     break;
-
             }
         } while (salir);
     }

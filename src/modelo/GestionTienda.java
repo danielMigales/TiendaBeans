@@ -39,6 +39,10 @@ public class GestionTienda {
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(GestionTienda.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        //FALTARIA AÑADIR LA OPCION DE COMPROBAR SI HAY STOCK SUFICIENTE ANTES DE HACER EL PEDIDO
+        
+        
 
     }
 
